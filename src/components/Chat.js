@@ -26,7 +26,8 @@ export const Chat = (props) => {
             return () => unsubscribe();
         }
         getMessages()
-    },[])
+
+    },[room,messageRef])
     
     const handleSubmitForm = async (e) => {
         e.preventDefault();
