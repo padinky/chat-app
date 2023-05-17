@@ -12,17 +12,20 @@ export const Chat = (props) => {
 
 
     useEffect(() => {
-        const queryMessages = query(messageRef, where("room","==",room), orderBy("createdAt"));
-        const unsubscribe = onSnapshot(queryMessages,(snapshot) => {
-            console.log("NEW MESSAGE", snapshot.docs);
-            let messages = [];
-            snapshot.forEach((doc) => {
-                messages.push({...doc.data(), id: doc.id});
+        const getMessages = () => {
+            const queryMessages = query(messageRef, where("room","==",room), orderBy("createdAt"));
+            const unsubscribe = onSnapshot(queryMessages,(snapshot) => {
+                console.log("NEW MESSAGE", snapshot.docs);
+                let messages = [];
+                snapshot.forEach((doc) => {
+                    messages.push({...doc.data(), id: doc.id});
+                });
+                setMessages(messages);
             });
-            setMessages(messages);
-        });
 
-        return () => unsubscribe();
+            return () => unsubscribe();
+        }
+        getMessages()
     },[])
     
     const handleSubmitForm = async (e) => {
