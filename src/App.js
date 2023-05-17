@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { Auth } from './components/Auth';
+import Cookies from "universal-cookie";
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase-config';
+import { Box, Button, Container} from '@mui/material';
+import { Room } from './components/Room';
+
+const cookies = new Cookies();
 
 function App() {
+  const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
+
+  const signUserOut = async () => {
+    await signOut(auth);
+    cookies.remove("auth-token");
+    cookies.remove("displayName");
+    setIsAuth(false);
+  }
+
+  if (!isAuth) {
+    return <Auth setIsAuth={setIsAuth} />
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Container>
+      <Room />
+      <Box sx={ {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+    } }>
+        <Box marginTop={10} justifyContent={"center"} alignItems={"center"}>
+            <Button onClick={signUserOut} variant='outlined' color='warning'>Sign Out</Button>
+        </Box>
+      </Box>
+    </Container>
+  )
+
 }
 
 export default App;
